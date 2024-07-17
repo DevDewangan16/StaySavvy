@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "901772336992",
+    "project_id": "staysavvy-f9ece",
+    "storage_bucket": "staysavvy-f9ece.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:901772336992:android:c288a7559d971f517d8805",
+        "android_client_info": {
+          "package_name": "com.example.staysavvy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDaTk1kniI-FTg_g_nWWA0GAJBX802z1VQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
