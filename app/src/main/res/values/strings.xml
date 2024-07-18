@@ -3,4 +3,7 @@
     <string name="bangalore">Bangalore</string>
     <string name="new_delhi">New Delhi</string>
     <string name="mumbai">Mumbai</string>
+    <string name="Deluxe">Deluxe Room Ac</string>
+    <string name="double_room">Double Room</string>
+    <string name="executives">Executives</string>
 </resources>

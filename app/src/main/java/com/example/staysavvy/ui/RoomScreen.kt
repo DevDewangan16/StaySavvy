@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Home
@@ -27,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,6 +36,7 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.staysavvy.R
 import com.example.staysavvy.R.drawable.muscle
+import com.example.staysavvy.data.DataSource
 import com.example.staysavvy.data.HotelCategoryItem
 
 @Composable
@@ -161,17 +164,9 @@ fun RoomScreen(staySavvyViewModel: StaySavvyViewModel,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = Color(2,204,254))
-            RoomSelection(RoomImage = R.drawable.delux_room, RoomName = "Deluxe Room Ac", RoomPrice ="Rs. 4,999" )
-            RoomSelection(
-                RoomImage = R.drawable.double_room,
-                RoomName = "Double Room",
-                RoomPrice = "Rs. 7,999"
-            )
-            RoomSelection(
-                RoomImage = R.drawable.executive_room,
-                RoomName = "Executives",
-                RoomPrice = "Rs. 9,999"
-            )
+        }
+        items(DataSource.loadRoomsCategory()){
+            RoomSelection(RoomImage = it.RoomImg, RoomName =it.RoomName , RoomPrice = it.RoomPrice)
         }
     }
 }
@@ -198,8 +193,8 @@ fun InternetRoomScreen(
 @Composable
 fun RoomSelection(
     RoomImage:Int,
-    RoomName:String,
-    RoomPrice:String
+    RoomName:Int,
+    RoomPrice:Int
 ){
     Column (modifier = Modifier.padding(5.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)){
@@ -207,22 +202,21 @@ fun RoomSelection(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            Image(
-                painter = painterResource(id = RoomImage), contentDescription = "Room Image",
+            AsyncImage(model = RoomImage, contentDescription = "Room Image ",
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(150.dp),
-                contentScale = ContentScale.FillWidth
-            )
+                contentScale = ContentScale.FillWidth)
         }
         Row (horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth()){
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(text = RoomName,
+                Text(
+                    text = stringResource(id = RoomName),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    )
-                Text(text = RoomPrice,
+                )
+                Text(text = "Rs. $RoomPrice",
                     fontSize = 16.sp)
             }
             Card(modifier = Modifier
