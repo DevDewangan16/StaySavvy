@@ -139,7 +139,8 @@ fun StaySavvyApp(staySavvyViewModel: StaySavvyViewModel= viewModel(),
                     FaqScreen()
                 }
                 composable(route = StaySavvyScreen.Suggestion.name){
-                    Where2GoScreen()
+                   // Where2GoScreen()
+                    CheckoutScreen(staySavvyViewModel = staySavvyViewModel)
                 }
             }
             if (logoutClicked){

@@ -38,6 +38,7 @@ import com.example.staysavvy.R
 import com.example.staysavvy.R.drawable.muscle
 import com.example.staysavvy.data.DataSource
 import com.example.staysavvy.data.HotelCategoryItem
+import com.example.staysavvy.data.RoomCategory
 
 @Composable
 fun RoomScreen(staySavvyViewModel: StaySavvyViewModel,
@@ -166,7 +167,7 @@ fun RoomScreen(staySavvyViewModel: StaySavvyViewModel,
                 color = Color(2,204,254))
         }
         items(DataSource.loadRoomsCategory()){
-            RoomSelection(RoomImage = it.RoomImg, RoomName =it.RoomName , RoomPrice = it.RoomPrice)
+            RoomSelection(staySavvyViewModel = staySavvyViewModel, RoomImage = it.RoomImg, RoomName =it.RoomName , RoomPrice = it.RoomPrice)
         }
     }
 }
@@ -192,6 +193,7 @@ fun InternetRoomScreen(
 
 @Composable
 fun RoomSelection(
+    staySavvyViewModel: StaySavvyViewModel,
     RoomImage:Int,
     RoomName:Int,
     RoomPrice:Int
@@ -233,7 +235,16 @@ fun RoomSelection(
             ) {
                 Column (modifier = Modifier
                     .fillMaxHeight()
-                    .padding(vertical = 5.dp, horizontal = 15.dp),
+                    .padding(vertical = 5.dp, horizontal = 15.dp)
+                    .clickable {
+                        staySavvyViewModel.addToDatabase(
+                            RoomCategory(
+                                RoomName = RoomName,
+                                RoomImg = RoomImage,
+                                RoomPrice = RoomPrice
+                            )
+                        )
+                    },
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally){
                     Text(text = "Select",

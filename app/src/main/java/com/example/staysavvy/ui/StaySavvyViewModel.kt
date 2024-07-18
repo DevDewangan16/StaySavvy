@@ -8,8 +8,14 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.staysavvy.data.HotelCategoryItem
+import com.example.staysavvy.data.RoomCategory
 import com.example.staysavvy.network.StaySavvyApi
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.database
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -63,11 +69,14 @@ class StaySavvyViewModel():ViewModel() {
     private val _checkOut=MutableStateFlow("")
     val checkOut:MutableStateFlow<String>get() = _checkOut
 
-    private val _cartItems=MutableStateFlow<List<HotelCategoryItem>>(emptyList())
-    val cartItems: StateFlow<List<HotelCategoryItem>> get() = _cartItems.asStateFlow()
+    private val _cartItems=MutableStateFlow<List<RoomCategory>>(emptyList())
+    val cartItems: StateFlow<List<RoomCategory>> get() = _cartItems.asStateFlow()
 
     private val _logoutClicked=MutableStateFlow(false)
     val logoutClicked:MutableStateFlow<Boolean>get() = _logoutClicked
+
+    val database = Firebase.database
+    val myRef = database.getReference("users/${auth.currentUser?.uid}/BookingDetails")
 
 
     private lateinit var timerJob: Job
@@ -126,6 +135,60 @@ class StaySavvyViewModel():ViewModel() {
         _otp.value=""
         verificationId.value=""
         resetTimer()
+    }
+
+    fun addToCart(item: RoomCategory){
+        _cartItems.value = _cartItems.value + item
+    }
+
+    fun addToDatabase(item:RoomCategory ){
+        myRef.push().setValue(item)
+    }
+
+    fun fillCartItems(){
+        // Read from the database
+        myRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                _cartItems.value= emptyList()
+                for (childSnapshot in dataSnapshot.children){
+                    val item=childSnapshot.getValue(RoomCategory::class.java)
+                    item?.let {
+                        val newItem=it
+                        addToCart(newItem)
+                    }
+                }
+                setLoading(false)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+            }
+        })
+    }
+
+    fun removeFromCart(oldItem: RoomCategory){
+        /* _cartItems.value = _cartItems.value - item
+         viewModelScope.launch {
+             saveCartItemsToDataStore()
+         }*/ //this code is for to remove item from the cart only not database
+        myRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                _cartItems.value= emptyList()
+                for (childSnapshot in dataSnapshot.children){
+                    var itemRemoved=false
+                    val item=childSnapshot.getValue(RoomCategory::class.java)
+                    item?.let {
+                        if (oldItem.RoomName==it.RoomName && oldItem.RoomPrice == it.RoomPrice){
+                            childSnapshot.ref.removeValue()
+                            itemRemoved=true
+                        }
+                    }
+                    if(itemRemoved) break
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+            }
+        })
     }
 
     fun runTimer(){
